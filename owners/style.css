@@ -87,8 +87,16 @@ header {
 }
 
 header a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
   text-decoration: none;
   font-weight: 600;
+}
+
+header img {
+  display: block;
+  border-radius: 50%;
 }
 
 h1 {
