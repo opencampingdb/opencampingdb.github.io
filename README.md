@@ -20,9 +20,8 @@ The key is public: it identifies this page to the intake, which limits each brow
 
 ## Before going live
 
-1. The owner terms are a draft. Update `owners/terms.html` and the summary in the forms if the approved wording differs.
-2. Set the app key in `owners/config.js`.
-3. Turn on GitHub Pages for this repository: Settings, Pages, deploy from the `main` branch, root folder.
+1. Set the app key in `owners/config.js`.
+2. Turn on GitHub Pages for this repository: Settings, Pages, deploy from the `main` branch, root folder.
 
 ## How the forms submit
 
