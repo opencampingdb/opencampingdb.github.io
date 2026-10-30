@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src https://ocdb-feedback-intake.scrytch.workers.dev; base-uri 'none'; form-action 'none'">
+    <meta name="referrer" content="no-referrer">
+    <meta name="description" content="Update the details of a place you run in Open Camping DB.">
+    <title>Update your place | Open Camping DB</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="config.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to the content</a>
+    <header>
+      <a href="./">Open Camping DB for owners</a>
+    </header>
+    <main id="main">
+      <h1>Update your place</h1>
+      <p class="lead">For a place whose claim is approved. Fill in only what has changed.</p>
+      <form data-kind="update" novalidate>
+      <fieldset>
+        <legend>Your place and token</legend>
+        <div class="field">
+          <label for="place">Open Camping DB place id</label>
+          <input type="text" id="place" name="place" required autocomplete="off" spellcheck="false" pattern="ocdb_[0-9A-HJKMNP-TV-Z]{{26}}">
+        </div>
+        <div class="field">
+          <label for="token">Your token</label>
+          <span class="hint" id="token-hint">The 43 character token you saved when you claimed the place.</span>
+          <input type="text" id="token" name="token" aria-describedby="token-hint" required autocomplete="off" spellcheck="false" minlength="43" maxlength="43">
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Open or closed</legend>
+        <div class="field">
+          <label for="status">Status</label>
+          <select id="status" name="status">
+            <option value="">No change</option>
+            <option value="temporarily_closed">Closed for a while</option>
+            <option value="open">Open again</option>
+          </select>
+        </div>
+        <div class="field" id="reopens-field" hidden>
+          <label for="reopens">Reopens on</label>
+          <span class="hint" id="reopens-hint">Your place shows as open again from this day.</span>
+          <input type="date" id="reopens" name="reopens" aria-describedby="reopens-hint">
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Description</legend>
+        <div class="field">
+          <label for="description">New description</label>
+          <span class="hint" id="description-hint">Plain text, up to 500 characters. Leave empty for no change.</span>
+          <textarea id="description" name="description" maxlength="500" aria-describedby="description-hint"></textarea>
+        </div>
+        <div class="check">
+          <input type="checkbox" id="remove_description" name="remove_description">
+          <label for="remove_description">Remove the description</label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Booking and contact</legend>
+        <div class="field">
+          <label for="fact_booking_url">Booking page</label>
+          <span class="hint" id="fact_booking_url-hint">Starts with https://</span>
+          <input type="url" id="fact_booking_url" name="fact_booking_url" aria-describedby="fact_booking_url-hint" inputmode="url" maxlength="300" placeholder="https://">
+        </div>
+        <div class="field">
+          <label for="fact_website">Website</label>
+          <span class="hint" id="fact_website-hint">Starts with https://</span>
+          <input type="url" id="fact_website" name="fact_website" aria-describedby="fact_website-hint" inputmode="url" maxlength="300" placeholder="https://">
+        </div>
+        <div class="field">
+          <label for="fact_phone">Phone</label>
+          <span class="hint" id="fact_phone-hint">Digits and spaces, for example 0412 345 678.</span>
+          <input type="tel" id="fact_phone" name="fact_phone" aria-describedby="fact_phone-hint" autocomplete="tel" maxlength="20">
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Facts</legend>
+        <div class="grid">
+        <div class="field">
+          <label for="fact_fee">Fees charged</label>
+          <select id="fact_fee" name="fact_fee">
+            <option value="">No change</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fact_power">Powered sites</label>
+          <select id="fact_power" name="fact_power">
+            <option value="">No change</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fact_tents">Tents allowed</label>
+          <select id="fact_tents" name="fact_tents">
+            <option value="">No change</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fact_caravans">Caravans allowed</label>
+          <select id="fact_caravans" name="fact_caravans">
+            <option value="">No change</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fact_toilets">Toilets</label>
+          <select id="fact_toilets" name="fact_toilets">
+            <option value="">No change</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fact_showers">Showers</label>
+          <select id="fact_showers" name="fact_showers">
+            <option value="">No change</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fact_drinking_water">Drinking water</label>
+          <select id="fact_drinking_water" name="fact_drinking_water">
+            <option value="">No change</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fact_dump_station">Dump point</label>
+          <select id="fact_dump_station" name="fact_dump_station">
+            <option value="">No change</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fact_pets">Pets</label>
+          <select id="fact_pets" name="fact_pets">
+            <option value="">No change</option>
+            <option value="yes">Yes</option>
+            <option value="leashed">On a lead</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fact_entry">Who may stay</label>
+          <select id="fact_entry" name="fact_entry">
+            <option value="">No change</option>
+            <option value="public">Anyone</option>
+            <option value="customers">Paying guests</option>
+            <option value="permit">With a permit</option>
+            <option value="private">Private, book first</option>
+          </select>
+        </div>
+        </div>
+        <div class="field">
+          <label for="fact_max_stay">Longest stay</label>
+          <span class="hint" id="fact_max_stay-hint">A number and h, d or w, for example 48h, 3d or 2w.</span>
+          <input type="text" id="fact_max_stay" name="fact_max_stay" aria-describedby="fact_max_stay-hint" maxlength="4" pattern="[1-9][0-9]{{0,2}}[hdw]">
+        </div>
+        <div class="field">
+          <label for="fact_opening_hours">Opening hours</label>
+          <span class="hint" id="fact_opening_hours-hint">For example 24/7 or Mo-Su 08:00-18:00.</span>
+          <input type="text" id="fact_opening_hours" name="fact_opening_hours" aria-describedby="fact_opening_hours-hint" maxlength="100">
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Name or location</legend>
+        <p class="hint">A person checks these before they change.</p>
+        <div class="field">
+          <label for="new_name">New name</label>
+          <input type="text" id="new_name" name="new_name" maxlength="100">
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="lat">Latitude</label>
+            <input type="number" id="lat" name="lat" step="any" min="-90" max="90" inputmode="decimal" placeholder="-36.851234">
+          </div>
+          <div class="field">
+            <label for="lon">Longitude</label>
+            <input type="number" id="lon" name="lon" step="any" min="-180" max="180" inputmode="decimal" placeholder="144.551234">
+          </div>
+        </div>
+        <button type="button" class="secondary" id="use-location">Use my location</button>
+        <p class="hint" id="location-status" aria-live="polite"></p>
+      </fieldset>
+      <fieldset>
+        <legend>Owner terms</legend>
+        <p class="terms" id="terms-summary">You run this place, or are allowed to act for whoever does, and it holds any council or other approvals it needs. What you send about the place (its facts, description, booking details and dates) is published in Open Camping DB under the Open Database Licence (ODbL 1.0), so anyone may use and share it. Your name and email stay private: we use them only to check your claim and contact you about this place. <a href="terms.html">Read the full owner terms</a>.</p>
+        <div class="check">
+          <input type="checkbox" id="terms" name="terms" required aria-describedby="terms-summary">
+          <label for="terms">I agree to the owner terms</label>
+        </div>
+      </fieldset>
+        <button type="submit">Send my update</button>
+      <div id="form-status" class="status" role="status" aria-live="polite"></div>
+      <noscript><p class="error">These forms need JavaScript to send.</p></noscript>
+      </form>
+    </main>
+    <footer>
+      <p>Open Camping DB is a free, open list of places to camp and stop in Australia. Data &copy; OpenStreetMap contributors, Open Camping DB, under the ODbL.</p>
+      <p><a href="terms.html">Owner terms</a> &middot; Questions or takedowns: <a href="mailto:abuse@camporacle.com.au">abuse@camporacle.com.au</a></p>
+    </footer>
+  </body>
+</html>

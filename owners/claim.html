@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src https://ocdb-feedback-intake.scrytch.workers.dev; base-uri 'none'; form-action 'none'">
+    <meta name="referrer" content="no-referrer">
+    <meta name="description" content="Claim a place you run in Open Camping DB.">
+    <title>Claim your place | Open Camping DB</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="config.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to the content</a>
+    <header>
+      <a href="./">Open Camping DB for owners</a>
+    </header>
+    <main id="main">
+      <h1>Claim your place</h1>
+      <p class="lead">For a place already in Open Camping DB. The app that sent you here may have filled in its id.</p>
+      <form data-kind="claim" novalidate>
+      <fieldset>
+        <legend>Your place</legend>
+        <div class="field">
+          <label for="place">Open Camping DB place id</label>
+          <span class="hint" id="place-hint">Starts with ocdb_, for example ocdb_01JBXK3M8Q4R5S6T7V8W9X0YZA. Your app shows it on the place.</span>
+          <input type="text" id="place" name="place" aria-describedby="place-hint" required autocomplete="off" spellcheck="false" pattern="ocdb_[0-9A-HJKMNP-TV-Z]{{26}}">
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Show it is yours</legend>
+        <div class="field">
+          <label for="proof_url">A page on your own website or public Facebook page</label>
+          <span class="hint" id="proof_url-hint">After you send this form you get a short code. Put it on this page so we can see the place is yours. It must start with https:// and be visible without logging in.</span>
+          <input type="url" id="proof_url" name="proof_url" aria-describedby="proof_url-hint" required inputmode="url" maxlength="500" placeholder="https://">
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>About you</legend>
+        <p class="hint">Kept private. Never published.</p>
+        <div class="field">
+          <label for="owner_name">Your name</label>
+          <input type="text" id="owner_name" name="owner_name" required autocomplete="name" maxlength="100">
+        </div>
+        <div class="field">
+          <label for="owner_email">Your email</label>
+          <input type="email" id="owner_email" name="owner_email" required autocomplete="email" maxlength="254">
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Owner terms</legend>
+        <p class="terms" id="terms-summary">You run this place, or are allowed to act for whoever does, and it holds any council or other approvals it needs. What you send about the place (its facts, description, booking details and dates) is published in Open Camping DB under the Open Database Licence (ODbL 1.0), so anyone may use and share it. Your name and email stay private: we use them only to check your claim and contact you about this place. <a href="terms.html">Read the full owner terms</a>.</p>
+        <div class="check">
+          <input type="checkbox" id="terms" name="terms" required aria-describedby="terms-summary">
+          <label for="terms">I agree to the owner terms</label>
+        </div>
+      </fieldset>
+        <button type="submit">Send my claim</button>
+      <div id="form-status" class="status" role="status" aria-live="polite"></div>
+      <noscript><p class="error">These forms need JavaScript to send.</p></noscript>
+      </form>
+    </main>
+    <footer>
+      <p>Open Camping DB is a free, open list of places to camp and stop in Australia. Data &copy; OpenStreetMap contributors, Open Camping DB, under the ODbL.</p>
+      <p><a href="terms.html">Owner terms</a> &middot; Questions or takedowns: <a href="mailto:abuse@camporacle.com.au">abuse@camporacle.com.au</a></p>
+    </footer>
+  </body>
+</html>
