@@ -2,15 +2,29 @@
 
 The Open Camping DB website on GitHub Pages. It holds the owner pages at `/owners/`, where the people who run a place can claim it, update it or list their private property.
 
-Plain HTML, CSS and JavaScript with no build step, no libraries and no trackers. Every page sets a Content Security Policy that allows scripts and styles from this site only and network requests to the feedback intake only.
+Plain HTML, CSS and JavaScript with no libraries and no trackers. Every page sets a Content Security Policy that allows scripts and styles from this site only, and network requests to this site and the feedback intake only.
 
 | Page | What it does |
 |---|---|
 | `owners/index.html` | Explains the three choices and how a claim works |
-| `owners/claim.html` | Claim a place already in the data. Fills in the place id from `?place=ocdb_...` |
+| `owners/claim.html` | Claim a place already in the data, found by name. A link with `?place=ocdb_...` chooses the place |
 | `owners/list.html` | List a private property (farm stay), with a "Use my location" button |
-| `owners/update.html` | Update a place with the owner's token |
+| `owners/update.html` | Update a place with the owner's token, found by name the same way |
 | `owners/terms.html` | The owner terms, copied from `feedback-engine/docs/owner-terms.md` |
+
+## Place search
+
+Owners find their place by typing its name. The Pages workflow (`.github/workflows/pages.yml`) builds the search from the latest data release on every push to `main` and every 6 hours, with `scripts/build_place_search.py`, and publishes it at `owners/search/`. Each file there holds the named places with a word starting with its 3 letters (`sam.json` for "Lake Sambell Caravan Park"), as `[id, name, kind, state, postcode, lat, lon]`, so a search loads one small file. The state comes from `scripts/au_states.json`, state and territory outlines simplified from OpenStreetMap (© OpenStreetMap contributors, ODbL). `owners/search/` is not committed.
+
+To try it locally:
+
+```
+curl -fsSLo /tmp/places.ndjson.gz https://github.com/opencampingdb/data/releases/latest/download/places.ndjson.gz
+python3 scripts/build_place_search.py /tmp/places.ndjson.gz owners/search
+python3 -m http.server 8765
+```
+
+and open http://127.0.0.1:8765/owners/claim.html.
 
 ## Settings
 
@@ -21,7 +35,7 @@ The key is public: it identifies this page to the intake, which limits each brow
 ## Before going live
 
 1. Set the app key in `owners/config.js`.
-2. Turn on GitHub Pages for this repository: Settings, Pages, deploy from the `main` branch, root folder.
+2. Turn on GitHub Pages for this repository: Settings, Pages, source GitHub Actions. The Pages workflow builds and deploys the site.
 
 ## How the forms submit
 
