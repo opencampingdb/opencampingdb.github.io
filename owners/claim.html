@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src https://ocdb-feedback-intake.scrytch.workers.dev; base-uri 'none'; form-action 'none'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self' https://ocdb-feedback-intake.scrytch.workers.dev; base-uri 'none'; form-action 'none'">
     <meta name="referrer" content="no-referrer">
     <meta name="description" content="Claim a place you run in Open Camping DB.">
     <title>Claim your place | Open Camping DB</title>
@@ -19,15 +19,27 @@
     </header>
     <main id="main">
       <h1>Claim your place</h1>
-      <p class="lead">For a place already in Open Camping DB. The app that sent you here may have filled in its id.</p>
+      <p class="lead">For a place already in Open Camping DB. Not listed? <a href="list.html">List your place</a>.</p>
       <form data-kind="claim" novalidate>
       <fieldset>
         <legend>Your place</legend>
-        <div class="field">
-          <label for="place">Open Camping DB place id</label>
-          <span class="hint" id="place-hint">Starts with ocdb_, for example ocdb_01JBXK3M8Q4R5S6T7V8W9X0YZA. Your app shows it on the place.</span>
-          <input type="text" id="place" name="place" aria-describedby="place-hint" required autocomplete="off" spellcheck="false" pattern="ocdb_[0-9A-HJKMNP-TV-Z]{{26}}">
+        <div id="place-finder">
+          <div class="field">
+            <label for="place-search">Find your place</label>
+            <span class="hint" id="place-search-hint">Type its name, as on a map.</span>
+            <input type="search" id="place-search" aria-describedby="place-search-hint" aria-controls="place-results" autocomplete="off" spellcheck="false" maxlength="100">
+          </div>
+          <p id="place-results-status" class="hint" role="status" aria-live="polite"></p>
+          <ul id="place-results" class="results"></ul>
         </div>
+        <div id="place-picked" class="picked" hidden>
+          <div>
+            <strong id="place-picked-name"></strong>
+            <span id="place-picked-detail"></span>
+          </div>
+          <button type="button" class="secondary">Change</button>
+        </div>
+        <input type="hidden" id="place" name="place">
       </fieldset>
       <fieldset>
         <legend>Show it is yours</legend>

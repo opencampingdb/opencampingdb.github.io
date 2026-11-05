@@ -189,6 +189,10 @@
     var status = document.getElementById("form-status");
     var button = form.querySelector("button[type=submit]");
     var body = builders[kind](form);
+    if ((kind === "claim" || kind === "update") && !body.place) {
+      showErrors(status, "Please find and choose your place.");
+      return;
+    }
     if (!body.terms_accepted) {
       showErrors(status, "Please tick the box to agree to the owner terms.");
       return;
@@ -249,6 +253,211 @@
     );
   }
 
+  // Kinds of place, in the words owners use.
+  var KINDS = {
+    campground: "Campground",
+    paid_campground: "Paid campground",
+    free_camp: "Free camp",
+    national_park_campsite: "National park campsite",
+    state_forest_campsite: "State forest campsite",
+    caravan_park: "Caravan park",
+    farm_stay: "Farm stay",
+    showground: "Showground",
+    rest_area: "Rest area",
+    long_vehicle_parking: "Long vehicle parking",
+    roofed_accommodation: "Cabins and rooms",
+    backpacker_hostel: "Hostel",
+    food_and_drink: "Food and drink",
+    fuel: "Fuel",
+    lpg_refill_swap: "LPG",
+    mechanic: "Mechanic",
+    dump_point: "Dump point",
+    picnic_site: "Picnic area",
+    information_centre: "Information centre",
+  };
+
+  function kindLabel(kind) {
+    if (KINDS[kind]) return KINDS[kind];
+    var words = String(kind || "").replace(/_/g, " ");
+    return words.charAt(0).toUpperCase() + words.slice(1);
+  }
+
+  // The same words scripts/build_place_search.py files a name under.
+  function searchWords(text) {
+    return String(text)
+      .normalize("NFKD")
+      .replace(/[^\x00-\x7f]/g, "")
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter(function (w) {
+        return w.length >= 2 || /^[0-9]$/.test(w);
+      });
+  }
+
+  var searchFiles = {};
+
+  // One file of the place search: every named place with a word starting with key.
+  function searchFile(key) {
+    if (!searchFiles[key]) {
+      searchFiles[key] = fetch("search/" + key + ".json").then(function (res) {
+        if (res.status === 404) return [];
+        if (!res.ok) throw new Error(String(res.status));
+        return res.json();
+      });
+      searchFiles[key].catch(function () {
+        delete searchFiles[key];
+      });
+    }
+    return searchFiles[key];
+  }
+
+  // Places whose name has a word starting with each word typed. The state
+  // ("vic") and the postcode also count, so "sambell vic" finds Lake Sambell.
+  function matches(entries, words) {
+    return entries.filter(function (e) {
+      var own = searchWords(e[1]);
+      return words.every(function (w) {
+        if (w === String(e[3]).toLowerCase() || (e[4] && String(e[4]).indexOf(w) === 0)) return true;
+        return own.some(function (o) {
+          return o.indexOf(w) === 0;
+        });
+      });
+    });
+  }
+
+  function rank(list, words) {
+    var typed = words.join(" ");
+    return list
+      .map(function (e) {
+        var own = searchWords(e[1]).join(" ");
+        var score = own === typed ? 0 : own.indexOf(typed) === 0 ? 1 : own.indexOf(words[0]) === 0 ? 2 : 3;
+        return { e: e, score: score };
+      })
+      .sort(function (a, b) {
+        return a.score - b.score || a.e[1].localeCompare(b.e[1]);
+      })
+      .map(function (x) {
+        return x.e;
+      });
+  }
+
+  var SHOWN = 25;
+  var STATES = ["nsw", "vic", "qld", "sa", "wa", "tas", "nt", "act"];
+
+  function placeSearch(form) {
+    var box = document.getElementById("place-search");
+    if (!box) return null;
+    var list = document.getElementById("place-results");
+    var status = document.getElementById("place-results-status");
+    var finder = document.getElementById("place-finder");
+    var picked = document.getElementById("place-picked");
+    var pickedName = document.getElementById("place-picked-name");
+    var pickedDetail = document.getElementById("place-picked-detail");
+    var field = form.elements.namedItem("place");
+    var timer = null;
+    var asked = 0;
+
+    function detail(e) {
+      return [kindLabel(e[2]), [e[3], e[4]].filter(Boolean).join(" ")].filter(Boolean).join(", ");
+    }
+
+    function pick(id, name, text, quiet) {
+      field.value = id;
+      pickedName.textContent = name;
+      pickedDetail.textContent = text;
+      finder.hidden = true;
+      picked.hidden = false;
+      if (!quiet) picked.querySelector("button").focus();
+    }
+
+    function change() {
+      field.value = "";
+      picked.hidden = true;
+      finder.hidden = false;
+      box.focus();
+    }
+
+    function show(found, words) {
+      clear(list);
+      if (!found.length) {
+        status.textContent = "No place with that name. Check the spelling, or try fewer words.";
+        return;
+      }
+      found.slice(0, SHOWN).forEach(function (e) {
+        var item = add(list, "li");
+        var button = add(item, "button", "", "result");
+        button.type = "button";
+        add(button, "strong", e[1]);
+        add(button, "span", detail(e));
+        button.addEventListener("click", function () {
+          pick(e[0], e[1], detail(e));
+        });
+        var map = add(item, "a", "Map", "map");
+        map.href = "https://www.openstreetmap.org/?mlat=" + e[5] + "&mlon=" + e[6] + "#map=15/" + e[5] + "/" + e[6];
+        map.target = "_blank";
+        map.rel = "noopener noreferrer";
+        map.setAttribute("aria-label", "Map of " + e[1]);
+      });
+      status.textContent =
+        found.length > SHOWN ? "Showing " + SHOWN + " of " + found.length + " places. Type more of the name to narrow it down." : found.length === 1 ? "1 place found." : found.length + " places found.";
+    }
+
+    function search() {
+      var words = searchWords(box.value);
+      var mine = ++asked;
+      if (!words.length) {
+        clear(list);
+        status.textContent = "";
+        return;
+      }
+      // Fetch the file for the longest word of the name, the one with the
+      // fewest places. A state or a postcode is only a filter.
+      var nameWords = words.filter(function (w) {
+        return STATES.indexOf(w) < 0 && !/^[0-9]{4}$/.test(w);
+      });
+      var keys = (nameWords.length ? nameWords : words)
+        .slice()
+        .sort(function (a, b) {
+          return b.length - a.length;
+        })
+        .map(function (w) {
+          return w.slice(0, 3);
+        });
+      status.textContent = "Searching...";
+      searchFile(keys[0])
+        .then(function (entries) {
+          if (mine !== asked) return;
+          show(rank(matches(entries, words), words), words);
+        })
+        .catch(function () {
+          if (mine !== asked) return;
+          clear(list);
+          status.textContent = "We could not load the place search. Check your connection and try again.";
+        });
+    }
+
+    box.addEventListener("input", function () {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(search, 200);
+    });
+    picked.querySelector("button").addEventListener("click", change);
+
+    return {
+      // A place id from the app's link: shown as chosen, without a name.
+      prefilled: function (id) {
+        pick(id, "Your place", id, true);
+      },
+      reset: function () {
+        field.value = "";
+        box.value = "";
+        clear(list);
+        status.textContent = "";
+        picked.hidden = true;
+        finder.hidden = false;
+      },
+    };
+  }
+
   function start() {
     var form = document.querySelector("form[data-kind]");
     if (!form) return;
@@ -258,8 +467,13 @@
     var params = new URLSearchParams(window.location.search);
     var place = params.get("place");
     var placeField = form.elements.namedItem("place");
+    var finder = placeSearch(form);
     var prefill = function () {
-      if (place && placeField && /^ocdb_[0-9A-HJKMNP-TV-Z]{26}$/.test(place)) placeField.value = place;
+      if (finder) finder.reset();
+      if (place && placeField && /^ocdb_[0-9A-HJKMNP-TV-Z]{26}$/.test(place)) {
+        placeField.value = place;
+        if (finder) finder.prefilled(place);
+      }
     };
     prefill();
 
