@@ -2,6 +2,5 @@
 # moderated need a review from the project lead (see GOVERNANCE.md).
 # The rule takes effect when the branch ruleset requires code owner review.
 
-/.github/                       @shanelord01
-/CODEOWNERS                     @shanelord01
-/AGENTS.md                      @shanelord01
+/.github/                       @opencampingdb/project-lead
+/AGENTS.md                      @opencampingdb/project-lead
