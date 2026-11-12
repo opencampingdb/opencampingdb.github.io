@@ -6,11 +6,12 @@ Plain HTML, CSS and JavaScript with no libraries and no trackers. Every page set
 
 | Page | What it does |
 |---|---|
+| `index.html` | The home page, with links for owners, for the data and for OpenStreetMap mappers |
 | `owners/index.html` | Explains the three choices and how a claim works |
 | `owners/claim.html` | Claim a place already in the data, found by name. A link with `?place=ocdb_...` chooses the place |
 | `owners/list.html` | List a private property (farm stay), with a "Use my location" button |
 | `owners/update.html` | Update a place with the owner's token, found by name the same way |
-| `owners/terms.html` | The owner terms, copied from `feedback-engine/docs/owner-terms.md` |
+| `owners/terms.html` | The owner terms, copied from [`docs/owner-terms.md`](https://github.com/opencampingdb/feedback-engine/blob/main/docs/owner-terms.md) in feedback-engine. The summary above each form's tick box is the SDK's `OWNER_TERMS_SUMMARY`. Change the terms there first, then copy them here |
 
 ## Place search
 
@@ -28,14 +29,7 @@ and open http://127.0.0.1:8765/owners/claim.html.
 
 ## Settings
 
-`owners/config.js` holds the intake address and the app key. Replace `REPLACE_WITH_OWNER_PAGE_APP_KEY` with the key for the app `owner-page` in the intake's `APP_KEYS` secret. Until then the forms say the page is not set up yet and send nothing.
-
-The key is public: it identifies this page to the intake, which limits each browser to 5 owner submissions a day.
-
-## Before going live
-
-1. Set the app key in `owners/config.js`.
-2. Turn on GitHub Pages for this repository: Settings, Pages, source GitHub Actions. The Pages workflow builds and deploys the site.
+`owners/config.js` holds the intake address and the app key for the app `owner-page`, which is in the intake's `APP_KEYS` secret. The key is public: it only identifies these pages to the intake. The intake allows 5 owner submissions a day from each browser and 10 from each network. If the intake address changes, change it in `owners/config.js` and in the `connect-src` of every page's Content Security Policy.
 
 ## How the forms submit
 
