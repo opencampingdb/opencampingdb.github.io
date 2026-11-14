@@ -165,13 +165,13 @@
     clear(status);
     var box = add(status, "div", "", "ok");
     add(box, "h2", "Thank you. Two more steps");
-    add(box, "p", "1. Put this code on your page at " + proofUrl + ". Anywhere on the page is fine, and you can take it down once your claim is approved.");
+    add(box, "p", "1. Put this code on your page at " + proofUrl + ". Anywhere on the page works. The strongest proof is a meta tag named opencampingdb-claim in the head of the page, with the code as its content. You can take it down once your claim is approved.");
     add(box, "span", answer.code, "secret");
     copyButton(box, answer.code, "Copy the code");
     add(box, "p", "2. Save this token somewhere safe, such as a password manager. You need it to update your place later. It is shown only now, and we cannot show it again.");
     add(box, "span", answer.token, "secret");
     copyButton(box, answer.token, "Copy the token");
-    add(box, "p", "We check your page every hour for 7 days. Once the code is there, a person reviews your claim, usually within a few days. Your reference is " + answer.id + ".");
+    add(box, "p", "We check your page several times a day for 7 days. Once the code is there, a person reviews your claim, usually within a few days. Your reference is " + answer.id + ".");
     box.setAttribute("tabindex", "-1");
     box.focus();
   }
